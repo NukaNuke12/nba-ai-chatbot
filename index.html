@@ -1,21 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NBA AI Chatbot</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: white;
-            text-align: center;
-            padding: 20px;
+    <title>NBA Chatbot</title>
+    <script>
+        async function getResponse() {
+            let userInput = document.getElementById("userInput").value;
+            let responseBox = document.getElementById("response");
+            
+            responseBox.innerHTML = "Thinking...";
+            
+            try {
+                let response = await fetch("https://api.openai.com/v1/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer YOUR_OPENAI_API_KEY"
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4",
+                        prompt: `NBA Chatbot: ${userInput}`,
+                        max_tokens: 100
+                    })
+                });
+                
+                let data = await response.json();
+                responseBox.innerHTML = data.choices[0].text;
+            } catch (error) {
+                responseBox.innerHTML = "Error: Unable to get response.";
+            }
         }
-    </style>
+    </script>
 </head>
 <body>
-    <h1>NBA AI Chatbot</h1>
-    <script src="script.js"></script>
+    <h2>NBA Chatbot</h2>
+    <input type="text" id="userInput" placeholder="Ask me about the NBA...">
+    <button onclick="getResponse()">Ask</button>
+    <p id="response"></p>
 </body>
 </html>
